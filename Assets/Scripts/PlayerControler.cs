@@ -6,25 +6,39 @@ public class PlayerControler : MonoBehaviour {
 	public float aimSpeed = 1f;
 	public float maxDistance = 2f;
 
-	[HideInInspector]
-	public float AttackPower = 500f;
-
 	public Transform reticleCircle;
 	public GameObject Bullet;
+	public float maxAttackPower = 500f;
 
+	[HideInInspector]
+	public int playerNumber = 0;
+	[HideInInspector]
+	public bool isCurrentPlayer;
+	[HideInInspector]
+	public bool hasFired = false;
+
+	float attackPower = 0f;
 	Vector2 startingLocation;
 
+	void Awake()
+	{
+		hasFired = false;
+		isCurrentPlayer = false;
+		maxAttackPower = 800f;
+	}
 
 	void Start()
 	{
-		StartTurn();
-        AttackPower = 500f;
-}
+		
+	}
 
 	void Update () {
-		Movement();
-		Aiming();
-    }
+		if (isCurrentPlayer)
+		{
+			Movement();
+			Aiming();
+		}
+	}
 
 	void Movement ()
 	{
@@ -46,25 +60,43 @@ public class PlayerControler : MonoBehaviour {
 				reticleCircle.Rotate(Vector3.forward * aimSpeed * Time.deltaTime);
 			if (Input.GetAxis("Vertical") < 0)
 				reticleCircle.Rotate(Vector3.forward * -aimSpeed * Time.deltaTime);
-
+			Debug.Log("Is current player: " + isCurrentPlayer);
 		}
 
-		if (Input.GetButtonDown("Fire1"))
+		if (Input.GetButtonDown("Fire1") && !hasFired)
 		{
-			Shootin();
+			StartCoroutine("Shootin");
         }
 	}
 
-	void Shootin()
+	IEnumerator Shootin()
 	{
-		GameObject tempBullet = Instantiate(Bullet, transform.position, reticleCircle.rotation) as GameObject;
-		tempBullet.GetComponent<Rigidbody2D>().AddRelativeForce(Vector2.right * AttackPower);
-		Debug.Log("Bullet force: " +  AttackPower);
+		hasFired = true;
 
+		attackPower = GameController.instance.powerSlider.value;
+		GameObject tempBullet = Instantiate(Bullet, transform.position, reticleCircle.rotation) as GameObject;
+		tempBullet.GetComponent<Rigidbody2D>().AddRelativeForce(Vector2.right * maxAttackPower * attackPower);
+		yield return new WaitForEndOfFrame();
+		EndTurn();
 	}
 
-	void StartTurn()
+	public void StartTurn()
 	{
+		hasFired = false;
+		isCurrentPlayer = true;
 		startingLocation = transform.position;
+		GameController.instance.powerSlider.value = attackPower;
     }
+
+	void EndTurn()
+	{
+		isCurrentPlayer = false;
+		GameController.instance.ChangeTurns();
+	}
+
+	public int GetAttackPowerValue()
+	{
+		attackPower = GameController.instance.powerSlider.value;
+		return Mathf.RoundToInt(attackPower * maxAttackPower);
+	}
 }
