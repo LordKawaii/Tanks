@@ -33,13 +33,17 @@ public class PlayerControler : MonoBehaviour {
 	}
 
 	void Update () {
-		if (isCurrentPlayer)
+		if (GameController.instance.gameState.GetState()[(int)States.isInGame])
 		{
-			Movement();
-			Aiming();
+			if (isCurrentPlayer)
+			{
+				Movement();
+				Aiming();
+			}
 		}
 	}
 
+	
 	void Movement ()
 	{
 		if (Input.GetButton("Horizontal"))
@@ -60,7 +64,6 @@ public class PlayerControler : MonoBehaviour {
 				reticleCircle.Rotate(Vector3.forward * aimSpeed * Time.deltaTime);
 			if (Input.GetAxis("Vertical") < 0)
 				reticleCircle.Rotate(Vector3.forward * -aimSpeed * Time.deltaTime);
-			Debug.Log("Is current player: " + isCurrentPlayer);
 		}
 
 		if (Input.GetButtonDown("Fire1") && !hasFired)
