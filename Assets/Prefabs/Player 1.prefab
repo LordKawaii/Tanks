@@ -134,10 +134,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 1
-  aimSpeed: 30
+  aimSpeed: 50
   maxDistance: 2
+  health: 5
   reticleCircle: {fileID: 453054}
-  Bullet: {fileID: 122072, guid: f187743ea00a40f4d92b2e4a4429de02, type: 2}
+  bullet1Prefab: {fileID: 122072, guid: f187743ea00a40f4d92b2e4a4429de02, type: 2}
+  bullet2Prefab: {fileID: 146810, guid: 5a5ed143f98baee47bbf29b85fcdcdd3, type: 2}
+  maxAttackPower: 500
+  playerNumber: 0
+  isCurrentPlayer: 0
+  hasFired: 0
+  tempBullet: {fileID: 0}
+  usingWeapon1: 1
 --- !u!212 &21221950
 SpriteRenderer:
   m_ObjectHideFlags: 1

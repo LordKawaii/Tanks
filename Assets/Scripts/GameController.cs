@@ -18,6 +18,10 @@ public class GameController : MonoBehaviour {
 	public Text powerSliderText;
 	public Text winnerText;
 	public Slider powerSlider;
+	public Slider healthBar;
+	public Image weapon1btn;
+	public Image weapon2btn;
+	public Color selectedWeaponColor;
 	public GameObject mainMenu;
 	public GameObject inGameUI;
 	public GameObject playerPrefab;
@@ -45,8 +49,10 @@ public class GameController : MonoBehaviour {
 
 	void Start ()
 	{
-			if (powerSlider == null)
+		if (powerSlider == null)
 			Debug.LogError("powerSlider is null!");
+		if (healthBar == null)
+			Debug.LogError("Healthbar is null!");
 	}
 	
 	void Update ()
@@ -107,7 +113,7 @@ public class GameController : MonoBehaviour {
 			Debug.Log("player count: " + players.Count);
 
 			if (winnerText != null)
-				winnerText.text = players[0].name + " is the winner!";
+				winnerText.text = players[0].name + " has won all the crack!";
 			else
 				Debug.LogError("Winner text is null");
 
@@ -135,6 +141,9 @@ public class GameController : MonoBehaviour {
 		GameObject player2 = Instantiate(playerPrefab, new Vector2(-playerDistanceFromCenter, floorHeight), playerPrefab.transform.rotation) as GameObject;
 		player2.name = "Player 2";
 		AddPlayer(player2);
+		player1.GetComponent<SpriteRenderer>().color = Color.blue;
+		player2.GetComponent<SpriteRenderer>().color = Color.red;
+		healthBar.maxValue = player1.GetComponent<PlayerControler>().health;
 
 		if (playerTurnText != null)
 			playerTurnText.text = PLAYER_TURN_PREFIX + " " + (currentPlayer + 1);
@@ -157,5 +166,18 @@ public class GameController : MonoBehaviour {
 	public void ExitGame()
 	{
 		Application.Quit();
+	}
+
+	public void Weapon1btn()
+	{
+		players[currentPlayer].usingWeapon1 = true;
+		weapon1btn.color = selectedWeaponColor;
+		weapon2btn.color = Color.white;
+	}
+	public void Weapon2btn()
+	{
+		players[currentPlayer].usingWeapon1 = false;
+		weapon2btn.color = selectedWeaponColor;
+		weapon1btn.color = Color.white;
 	}
 }

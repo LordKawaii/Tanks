@@ -2,11 +2,14 @@
 using System.Collections;
 
 public class BulletControler : MonoBehaviour {
+	public int damage = 2;
+
 	[HideInInspector]
 	public PlayerControler owner;
 
-	void OnTriggerEnter2D(Collider2D other)
+	protected void OnTriggerEnter2D(Collider2D other)
 	{
+
 		if (owner == null && other.tag == "Player")
 		{
 			owner = other.GetComponent<PlayerControler>();
@@ -20,16 +23,27 @@ public class BulletControler : MonoBehaviour {
 
 		if (other.tag == "Player" && other.GetComponent<PlayerControler>() != owner && owner != null)
 		{
+			bulletEffect(other.gameObject);
+        }
+	}
+
+	protected virtual void bulletEffect(GameObject other)
+	{
+		PlayerControler player = other.GetComponent<PlayerControler>();
+
+		if (player.health - damage <= 0)
+		{
 			GameController.instance.numPlayers--;
-			GameController.instance.players.Remove(other.GetComponent<PlayerControler>());
+			GameController.instance.players.Remove(player);
 			Destroy(other.gameObject);
 			GameController.instance.players.TrimExcess();
 			GameController.instance.players.Sort();
-			Destroy(gameObject);
+		}
+		else
+		{
+			player.health -= damage;
 		}
 
-		if (owner != null)
-			Debug.Log("Owner name: " + owner.name + " Others name: " + other.name);
+		Destroy(gameObject);
 	}
-	
 }
